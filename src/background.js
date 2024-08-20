@@ -1,14 +1,17 @@
-chrome.runtime.onInstalled.addListener(function() {
-    console.log("Finance Visualizer extension installed");
-});
-
-// Handle the OAuth 2.0 flow
 chrome.identity.getAuthToken({interactive: true}, function(token) {
     if (chrome.runtime.lastError) {
         console.log(chrome.runtime.lastError.message);
         return;
     }
 
-    console.log('Token acquired:', token);
-    // Now you can use this token to interact with the Google Sheets API
+    // Use the token to make authenticated requests to Google Sheets API
+    fetch('https://sheets.googleapis.com/v4/spreadsheets/YOUR_SHEET_ID/values/A1:D5', {
+        headers: {
+            'Authorization': 'Bearer ' + token
+        }
+    })
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => console.log(error));
 });
+
